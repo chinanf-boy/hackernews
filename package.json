@@ -2,10 +2,13 @@
   "name": "hackernews",
   "version": "0.1.0",
   "private": true,
+  "homepage":".",
   "devDependencies": {
     "enzyme": "^2.7.1",
+    "material-ui": "^0.17.1",
     "react-addons-test-utils": "^15.4.2",
     "react-scripts": "0.8.5",
+    "react-tap-event-plugin": "^2.0.1",
     "react-test-renderer": "^15.4.2"
   },
   "dependencies": {
