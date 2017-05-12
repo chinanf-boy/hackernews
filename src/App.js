@@ -18,10 +18,11 @@ class App extends Component {
       searchKey: '', searchTerm: DEFAULT_QUERY,
     };
     this.needsToSearchTopstories = this.needsToSearchTopstories.bind(this); this.setSearchTopstories = this.setSearchTopstories.bind(this); this.fetchSearchTopstories = this.fetchSearchTopstories.bind(this); this.onSearchChange = this.onSearchChange.bind(this); this.onSearchSubmit = this.onSearchSubmit.bind(this);
-    this.onDismiss = this.onDismiss.bind(this); }
+    this.onDismiss = this.onDismiss.bind(this); this.ScrollEvent = this.ScrollEvent.bind(this); }
     componentDidMount() {
       const { searchTerm } = this.state;
       this.setState({ searchKey: searchTerm }); this.fetchSearchTopstories(searchTerm, DEFAULT_PAGE);
+      window.addEventListener("scroll", this.ScrollEvent, false);
     }
     setSearchTopstories(result) {
       const { hits, page } = result;
@@ -30,11 +31,32 @@ class App extends Component {
       : [];
       const updatedHits = [ ...oldHits, ...hits
       ];
+      this.fetchtime = 0;
       this.setState({ results: {
         ...results,
         [searchKey]: { hits: updatedHits, page }
       }
     }); }
+    ScrollEvent() {
+      const {
+      searchTerm,
+      results,
+      searchKey
+    } = this.state;
+    const page = (
+      results && results[searchKey] && results[searchKey].page
+    ) || 0;
+        var wScrollY = window.scrollY; // 当前滚动条位置
+        var wInnerH = window.innerHeight; // 设备窗口的高度（不会变）
+        var bScrollH = document.body.scrollHeight; // 滚动条总高度
+        let isfetch = 0;
+        if (wScrollY + wInnerH >= bScrollH - 200) {
+            //你需要做的动作
+            if(!this.fetchtime){
+            this.fetchSearchTopstories(searchKey, page + 1);
+            this.fetchtime = 1;
+            }
+      }}
     fetchSearchTopstories(searchTerm, page) { fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(response => response.json())
       .then(result => this.setSearchTopstories(result));
@@ -90,15 +112,16 @@ class App extends Component {
           list={list} onDismiss={this.onDismiss}
         />
         <div className="interactions">
-          <Button
-            onClick={() => this.fetchSearchTopstories(searchKey, page + 1)}
-          >
-            {More}
-          </Button>
+        { (results && results[searchKey] && results[searchKey])?
+          <Loading></Loading>
+          : <Loading></Loading>
+        }
         </div>
       </div>
     )
-    } }
+  } }
+  const Loading = () => <h1>Loading...</h1>;
+  
     const Search = ({ value,
       onChange,
       onSubmit,
@@ -113,8 +136,8 @@ class App extends Component {
       <button type="submit">
         {children}
       </button>
-    </form>
-    const Table = ({ list, onDismiss }) => <div className="table">
+    </form>;
+const Table = ({ list, onDismiss }) => <div className="table">
       { list.map(item =>
         <div key={item.objectID} className="table-row">
           <span style={{ width: '40%' }}>
@@ -138,11 +161,11 @@ class App extends Component {
             </Button>
           </span>
         </div> )}
-      </div>
+</div>;
       const Button = ({ onClick, className = '', children }) => <button
         onClick={onClick}
         className={className}
         type="button"
-        > {children} </button>
+        > {children} </button>;
 
       export default App;
