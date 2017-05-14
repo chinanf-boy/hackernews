@@ -2,7 +2,7 @@
   "name": "hackernews",
   "version": "0.1.0",
   "private": true,
-  "homepage":".",
+  "homepage": ".",
   "devDependencies": {
     "enzyme": "^2.7.1",
     "material-ui": "^0.17.1",
@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "whatwg-fetch": "^2.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
